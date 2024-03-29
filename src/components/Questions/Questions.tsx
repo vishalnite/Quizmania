@@ -1,29 +1,14 @@
 import { useContext } from 'react';
-import QUESTIONS from "../questions";
-import QuestionTimer from './QuestionTimer';
+import QUESTIONS from "../../questions";
+import QuestionTimer from '../QuestionTimer/QuestionTimer';
+import { QuizContext } from '../../quiz/QuizContext';
 
-import {
-  Text,
-  makeStyles,
-} from "@fluentui/react-components";
-
-import { QuizContext } from '../quiz/QuizContext';
-
-const useStyles = makeStyles({
-  quizHeader: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center"
-  },
-  headerText: {
-    fontSize: "1.5rem",
-    lineHeight: "1.5rem"
-  },
-});
+import { Text } from "@fluentui/react-components";
+import { useStyles } from './QuestionsStyles';
 
 export default function Answers() {
     const classes = useStyles();
-    const { userAnswers, handleSelectAnswer } = useContext(QuizContext);
+    const { timer, userAnswers, handleSelectAnswer } = useContext(QuizContext);
 
     const currentQuestionIndex = userAnswers.length;
 
@@ -31,7 +16,7 @@ export default function Answers() {
         <div className={classes.quizHeader}>
             <QuestionTimer 
                 key={currentQuestionIndex}
-                timeout={10000}
+                timeout={timer * 1000}
                 onTimeout={() => handleSelectAnswer(null)} 
             />
             <Text className={classes.headerText} as="h2">

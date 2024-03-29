@@ -1,12 +1,5 @@
 import { useState, useEffect } from 'react';
-
-import { makeStyles } from "@fluentui/react-components";
-
-const useStyles = makeStyles({
-  progressBar: {
-    width: "70%",
-  },
-});
+import { useStyles } from './QuestionTimerStyles';
 
 interface TimerProps {
     timeout: number,

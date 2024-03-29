@@ -1,57 +1,35 @@
-import { QuizContext } from "../quiz/QuizContext";
-import { useContext } from "react";
-import QUESTIONS from "../questions";
+import QUESTIONS from "../../questions";
+import PieChart from "../Charts/PieChart";
+import { useStyles } from "./SummaryStyles";
 
-import {
-    makeStyles,
-    tokens,
-    shorthands
-} from "@fluentui/react-components";
+interface propType {
+    userAnswers: (string | null)[];
+}
 
-const useStyles = makeStyles({
-    heading: {
-        fontSize: "2rem",
-        textAlign: "center",
-        marginBottom: "3rem"
-    },
-    container: {
-        ...shorthands.margin("4rem", "0")
-    },
-    questionText: {
-        fontSize: "1.5rem",
-        lineHeight: "1.8rem"
-    },
-    answerList: {
-        listStyleType: "none",
-        ...shorthands.padding("0", "0.5rem")
-    },
-    answers: {
-        fontSize: "1.1rem",
-        ...shorthands.padding("0.5rem", "0")
-    },
-    response: {
-        fontFamily: 'cursive',
-        fontSize: "1.1rem"
-    },
-    correct: {
-        color: tokens.colorStatusSuccessForeground3
-    },
-    wrong: {
-        color: tokens.colorStatusDangerBackground3
-    },
-    skipped: {
-        color: tokens.colorStatusWarningBackground3
-    }
-})
-
-export default function Summary() {
+export default function Summary( { userAnswers }: propType ) {
     const classes = useStyles();
-    const { userAnswers } = useContext(QuizContext);
     
+    let correctCount = 0, wrongCount = 0;
+    
+    for(let currentIndex = 0; currentIndex < QUESTIONS.length; currentIndex++) {
+        if(QUESTIONS[currentIndex].answers[0] === userAnswers[currentIndex]) {
+            correctCount++;
+        }
+        else {
+            wrongCount++;
+        }
+    }
+
+    const data = [
+        {value: correctCount, name: "Correct", color: "#00FF00"},
+        {value: wrongCount, name: "Wrong", color: '#FF0000'}
+    ]
+
+    const colors = ['#66BB6A', '#EF5350'];
 
     return (
         <div>
-           <h2 className={classes.heading}>QUIZ SUMMARY</h2>
+            <PieChart data={data} colors={colors} />
            {
             QUESTIONS.map((question) => {
                 let currentQuestionIndex = QUESTIONS.findIndex((itr) => question === itr)

@@ -1,15 +1,26 @@
-import { useState, createContext, ReactNode } from 'react';
+import { useState, createContext, useContext, ReactNode } from 'react';
+import QUESTIONS from '../questions';
 
 interface QuizContextType {
+    timer: number; 
+    showStartScreen: boolean;
     userAnswers: (string | null)[];
+    userAnswersHistory: (string | null)[][];
     handleSelectAnswer: (selectedAnswer: string | null) => void;
-    handleRestart: () => void
+    handleRestart: () => void;
+    toggleStart: () => void;
+    updateTimer: (value: number) => void;
 }
 
 export const QuizContext = createContext<QuizContextType>({
+    timer: 10,
+    showStartScreen: true,
     userAnswers: [],
+    userAnswersHistory: [],
     handleSelectAnswer: () => {},
-    handleRestart: () => {}
+    handleRestart: () => {},
+    toggleStart: () => {},
+    updateTimer: () => {},
 })
 
 interface QuizContextProviderProps {
@@ -18,29 +29,48 @@ interface QuizContextProviderProps {
 
 export default function QuizContextProvider({ children } : QuizContextProviderProps) {
     const [userAnswers, setUserAnswers] = useState<(string | null)[]>([]);
-    
-    function handleSelectAnswer(selectedAnswer: string | null) {
-        setTimeout(() => {
+    const [showStartScreen, setShowStartScreen] = useState<boolean>(true);
+    const [timer, setTimer] = useState<number>(10);
+    const { userAnswersHistory } = useContext(QuizContext);
 
-        }, 2000)
-        
+    function toggleStart() {
+        userAnswersHistory.length = 0;
+        if(!showStartScreen) {
+            setTimer(10);
+        }
+        setShowStartScreen(prevState => !prevState);
+    }
+
+    function handleSelectAnswer(selectedAnswer: string | null) {
         setUserAnswers((prevAnswers) => {
-            return [...prevAnswers, selectedAnswer]
+            const newUserAnswers = [...prevAnswers, selectedAnswer];
+            if(newUserAnswers.length === QUESTIONS.length) {
+                userAnswersHistory.push(newUserAnswers);
+            }
+            return newUserAnswers;
         })
     }
 
     function handleRestart() {
-        setUserAnswers([])
+        setUserAnswers([]);
+    }
+
+    function updateTimer(newTimer: number) {
+        setTimer(newTimer);
     }
 
     const quizValue = {
+        timer: timer,
+        showStartScreen: showStartScreen,
         userAnswers: userAnswers,
+        userAnswersHistory: userAnswersHistory,
         handleSelectAnswer: handleSelectAnswer,
-        handleRestart: handleRestart
+        handleRestart: handleRestart,
+        toggleStart: toggleStart,
+        updateTimer: updateTimer,
     }
 
     return <QuizContext.Provider value={quizValue}>
         {children}
     </QuizContext.Provider>
-
 }

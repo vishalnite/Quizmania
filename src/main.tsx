@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom/client'
 import { FluentProvider, teamsLightTheme, makeStyles } from '@fluentui/react-components';
+import QuizContextProvider from './quiz/QuizContext.tsx';
 import App from './App.tsx'
 import './index.css'
 import { StrictMode } from 'react';
@@ -20,7 +21,9 @@ const ThemeSwitcher = () => {
   return (
     <FluentProvider className={classes.container} theme={teamsLightTheme}>
       <StrictMode>
-        <App />
+        <QuizContextProvider>
+          <App />
+        </QuizContextProvider>
       </StrictMode>
     </FluentProvider>
   );
